@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game</title>
+    <!-- This title is used for tabs and bookmarks -->
+    <title>JJ's Homepage</title>
+
+    <!-- Use UTF character set, a good idea with any webpage -->
+    <meta charset="UTF-8" />
+    <!-- Set viewport so page remains consistently scaled w narrow devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Include a sitewide CSS file for consistent styling across the site -->
+    <link rel="stylesheet" type="text/css" href="css/site.css">
+    <!-- Lab-specifc CSS file for any special styling of this particular page -->
+    <link rel="stylesheet" type="text/css" href="css/homepage.css">
+    <!-- Link to javascript file - DEFER waits until all elements are rendered -->
+    <!-- <script type="text/javascript" src="./js/lab.js" DEFER></script> -->
+
     <style>
-        body {
+        #gameSection {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+            margin-top: 20px;
         }
         #gameCanvas {
             border: 2px solid #333;
+            margin-top: 10px;
         }
         #scoreBoard {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 20px;
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         .button {
             padding: 10px 20px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
@@ -37,33 +45,50 @@
             background-color: #45a049;
         }
         #menuScreen, #endScreen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             text-align: center;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="scoreBoard" style="display: none;">
-        <div>Score: <span id="currentScore">0</span></div>
-        <div>High Score: <span id="highScore">0</span></div>
-    </div>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="menuScreen">
-        <h1>Snake Game</h1>
-        <button id="playButton" class="button">Play</button>
-    </div>
-    <div id="endScreen" style="display: none;">
-        <h2>Game Over</h2>
-        <p>Score: <span id="finalScore"></span></p>
-        <p>High Score: <span id="finalHighScore"></span></p>
-        <button id="playAgainButton" class="button">Play Again</button>
-    </div>
+    <!-- Style this page by changing the CSS in ../css/site.css or css/lab.css -->
+    <main id="content">
+        <section>
+            <h1>JJ's Homepage</h1>
+            <div class="minor-section">
+                <!-- Note that all filenames use lowercase and no spaces -->
+                <img class="cat-photo" src="./img/cute-grey-kitten.jpg">
+                <h2>About Me</h2>
+                <p>My name is JJ. Welcome to my website :D</p>
+            </div>
+        </section>
+
+        <section id="gameSection">
+            <h2>Play Snake Game</h2>
+            <div id="scoreBoard" style="display: none;">
+                <div>Score: <span id="currentScore">0</span></div>
+                <div>High Score: <span id="highScore">0</span></div>
+            </div>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <div id="menuScreen">
+                <h3>Snake Game</h3>
+                <button id="playButton" class="button">Play</button>
+            </div>
+            <div id="endScreen" style="display: none;">
+                <h3>Game Over</h3>
+                <p>Score: <span id="finalScore"></span></p>
+                <p>High Score: <span id="finalHighScore"></span></p>
+                <button id="playAgainButton" class="button">Play Again</button>
+            </div>
+        </section>
+
+        <nav id="links">
+            <!-- Put links to labs here. -->
+        </nav>
+    </main>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -95,6 +120,7 @@
             menuScreen.style.display = 'none';
             endScreen.style.display = 'none';
             scoreBoard.style.display = 'block';
+            canvas.style.display = 'block';
             resetGame();
             gameLoop = setInterval(runGame, 100);
         }
@@ -104,6 +130,7 @@
             finalScoreElement.textContent = score;
             finalHighScoreElement.textContent = highScore;
             endScreen.style.display = 'block';
+            canvas.style.display = 'none';
         }
 
         playButton.addEventListener('click', startGame);
