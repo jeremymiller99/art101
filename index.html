@@ -71,29 +71,31 @@
                 <img class="cat-photo" src="./img/cute-grey-kitten.jpg">
                 <h2>About Me</h2>
                 <p>My name is JJ. Welcome to my website :D</p>
+
+				<section id="gameSection">
+					<h2>Play Snake Game</h2>
+					<div id="scoreBoard" style="display: none;">
+						<div>Score: <span id="currentScore">0</span></div>
+						<div>High Score: <span id="highScore">0</span></div>
+					</div>
+					<div id="gameContainer">
+						<canvas id="gameCanvas" width="400" height="400"></canvas>
+						<div id="menuScreen">
+							<h3>Snake Game</h3>
+							<button id="playButton" class="button">Play</button>
+						</div>
+						<div id="endScreen" style="display: none;">
+							<h3>Game Over</h3>
+							<p>Score: <span id="finalScore"></span></p>
+							<p>High Score: <span id="finalHighScore"></span></p>
+							<button id="playAgainButton" class="button">Play Again</button>
+						</div>
+					</div>
+				</section>
             </div>
         </section>
 
-        <section id="gameSection">
-            <h2>Play Snake Game</h2>
-            <div id="scoreBoard" style="display: none;">
-                <div>Score: <span id="currentScore">0</span></div>
-                <div>High Score: <span id="highScore">0</span></div>
-            </div>
-            <div id="gameContainer">
-                <canvas id="gameCanvas" width="400" height="400"></canvas>
-                <div id="menuScreen">
-                    <h3>Snake Game</h3>
-                    <button id="playButton" class="button">Play</button>
-                </div>
-                <div id="endScreen" style="display: none;">
-                    <h3>Game Over</h3>
-                    <p>Score: <span id="finalScore"></span></p>
-                    <p>High Score: <span id="finalHighScore"></span></p>
-                    <button id="playAgainButton" class="button">Play Again</button>
-                </div>
-            </div>
-        </section>
+        
 
         <nav id="links">
             <!-- Put links to labs here. -->
