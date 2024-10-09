@@ -1,21 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- This title is used for tabs and bookmarks -->
     <title>JJ's Homepage</title>
-
-    <!-- Use UTF character set, a good idea with any webpage -->
     <meta charset="UTF-8" />
-    <!-- Set viewport so page remains consistently scaled w narrow devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Include a sitewide CSS file for consistent styling across the site -->
     <link rel="stylesheet" type="text/css" href="css/site.css">
-    <!-- Lab-specifc CSS file for any special styling of this particular page -->
     <link rel="stylesheet" type="text/css" href="css/homepage.css">
-    <!-- Link to javascript file - DEFER waits until all elements are rendered -->
-    <!-- <script type="text/javascript" src="./js/lab.js" DEFER></script> -->
-
     <style>
         #gameSection {
             display: flex;
@@ -23,11 +13,11 @@
             align-items: center;
             margin-top: 20px;
         }
-        #gameCanvas {
+        .gameCanvas {
             border: 2px solid #333;
             margin-top: 10px;
         }
-        #scoreBoard {
+        .scoreBoard {
             font-size: 18px;
             margin-bottom: 10px;
         }
@@ -44,7 +34,7 @@
         .button:hover {
             background-color: #45a049;
         }
-        #menuScreen, #endScreen {
+        .menuScreen, .endScreen {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -54,47 +44,67 @@
             padding: 20px;
             border-radius: 10px;
         }
-        #gameContainer {
+        .gameContainer {
             position: relative;
             width: 400px;
             height: 400px;
+            margin-bottom: 20px;
+        }
+        #tetrisContainer {
+            width: 300px;
+            height: 600px;
         }
     </style>
 </head>
 <body>
-    <!-- Style this page by changing the CSS in ../css/site.css or css/lab.css -->
     <main id="content">
         <section>
             <h1>JJ's Homepage</h1>
             <div class="minor-section">
-                <!-- Note that all filenames use lowercase and no spaces -->
                 <h2>Welcome to my page</h2>
                 <p>My name is JJ. Play some games</p>
 
-				<section id="gameSection">
-					<h2>Play Snake Game</h2>
-					<div id="scoreBoard" style="display: none;">
-						<div>Score: <span id="currentScore">0</span></div>
-						<div>High Score: <span id="highScore">0</span></div>
-					</div>
-					<div id="gameContainer">
-						<canvas id="gameCanvas" width="400" height="400"></canvas>
-						<div id="menuScreen">
-							<h3>Snake Game</h3>
-							<button id="playButton" class="button">Play</button>
-						</div>
-						<div id="endScreen" style="display: none;">
-							<h3>Game Over</h3>
-							<p>Score: <span id="finalScore"></span></p>
-							<p>High Score: <span id="finalHighScore"></span></p>
-							<button id="playAgainButton" class="button">Play Again</button>
-						</div>
-					</div>
-				</section>
+                <section id="gameSection">
+                    <h2>Play Snake Game</h2>
+                    <div id="snakeScoreBoard" class="scoreBoard" style="display: none;">
+                        <div>Score: <span id="snakeCurrentScore">0</span></div>
+                        <div>High Score: <span id="snakeHighScore">0</span></div>
+                    </div>
+                    <div id="snakeContainer" class="gameContainer">
+                        <canvas id="snakeCanvas" class="gameCanvas" width="400" height="400"></canvas>
+                        <div id="snakeMenuScreen" class="menuScreen">
+                            <h3>Snake Game</h3>
+                            <button id="snakePlayButton" class="button">Play Snake</button>
+                        </div>
+                        <div id="snakeEndScreen" class="endScreen" style="display: none;">
+                            <h3>Game Over</h3>
+                            <p>Score: <span id="snakeFinalScore"></span></p>
+                            <p>High Score: <span id="snakeFinalHighScore"></span></p>
+                            <button id="snakePlayAgainButton" class="button">Play Again</button>
+                        </div>
+                    </div>
+
+                    <h2>Play Tetris</h2>
+                    <div id="tetrisScoreBoard" class="scoreBoard" style="display: none;">
+                        <div>Score: <span id="tetrisCurrentScore">0</span></div>
+                        <div>High Score: <span id="tetrisHighScore">0</span></div>
+                    </div>
+                    <div id="tetrisContainer" class="gameContainer">
+                        <canvas id="tetrisCanvas" class="gameCanvas" width="300" height="600"></canvas>
+                        <div id="tetrisMenuScreen" class="menuScreen">
+                            <h3>Tetris</h3>
+                            <button id="tetrisPlayButton" class="button">Play Tetris</button>
+                        </div>
+                        <div id="tetrisEndScreen" class="endScreen" style="display: none;">
+                            <h3>Game Over</h3>
+                            <p>Score: <span id="tetrisFinalScore"></span></p>
+                            <p>High Score: <span id="tetrisFinalHighScore"></span></p>
+                            <button id="tetrisPlayAgainButton" class="button">Play Again</button>
+                        </div>
+                    </div>
+                </section>
             </div>
         </section>
-
-        
 
         <nav id="links">
             <!-- Put links to labs here. -->
@@ -102,17 +112,18 @@
     </main>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const currentScoreElement = document.getElementById('currentScore');
-        const highScoreElement = document.getElementById('highScore');
-        const finalScoreElement = document.getElementById('finalScore');
-        const finalHighScoreElement = document.getElementById('finalHighScore');
-        const scoreBoard = document.getElementById('scoreBoard');
-        const menuScreen = document.getElementById('menuScreen');
-        const endScreen = document.getElementById('endScreen');
-        const playButton = document.getElementById('playButton');
-        const playAgainButton = document.getElementById('playAgainButton');
+        // Snake Game Code
+        const snakeCanvas = document.getElementById('snakeCanvas');
+        const snakeCtx = snakeCanvas.getContext('2d');
+        const snakeCurrentScoreElement = document.getElementById('snakeCurrentScore');
+        const snakeHighScoreElement = document.getElementById('snakeHighScore');
+        const snakeFinalScoreElement = document.getElementById('snakeFinalScore');
+        const snakeFinalHighScoreElement = document.getElementById('snakeFinalHighScore');
+        const snakeScoreBoard = document.getElementById('snakeScoreBoard');
+        const snakeMenuScreen = document.getElementById('snakeMenuScreen');
+        const snakeEndScreen = document.getElementById('snakeEndScreen');
+        const snakePlayButton = document.getElementById('snakePlayButton');
+        const snakePlayAgainButton = document.getElementById('snakePlayAgainButton');
 
         const gridSize = 20;
         const tileCount = 20;
@@ -120,41 +131,41 @@
         let food = {x: 15, y: 15};
         let dx = 0;
         let dy = 0;
-        let score = 0;
-        let highScore = localStorage.getItem('snakeHighScore') || 0;
-        let gameOver = false;
-        let gameLoop;
+        let snakeScore = 0;
+        let snakeHighScore = localStorage.getItem('snakeHighScore') || 0;
+        let snakeGameOver = false;
+        let snakeGameLoop;
 
-        highScoreElement.textContent = highScore;
+        snakeHighScoreElement.textContent = snakeHighScore;
 
-        function startGame() {
-            menuScreen.style.display = 'none';
-            endScreen.style.display = 'none';
-            scoreBoard.style.display = 'block';
-            canvas.style.display = 'block';
-            resetGame();
-            gameLoop = setInterval(runGame, 100);
+        function startSnakeGame() {
+            snakeMenuScreen.style.display = 'none';
+            snakeEndScreen.style.display = 'none';
+            snakeScoreBoard.style.display = 'block';
+            snakeCanvas.style.display = 'block';
+            resetSnakeGame();
+            snakeGameLoop = setInterval(runSnakeGame, 100);
         }
 
-        function endGame() {
-            clearInterval(gameLoop);
-            finalScoreElement.textContent = score;
-            finalHighScoreElement.textContent = highScore;
-            endScreen.style.display = 'block';
-            canvas.style.display = 'none';
+        function endSnakeGame() {
+            clearInterval(snakeGameLoop);
+            snakeFinalScoreElement.textContent = snakeScore;
+            snakeFinalHighScoreElement.textContent = snakeHighScore;
+            snakeEndScreen.style.display = 'block';
+            snakeCanvas.style.display = 'none';
         }
 
-        playButton.addEventListener('click', startGame);
-        playAgainButton.addEventListener('click', startGame);
+        snakePlayButton.addEventListener('click', startSnakeGame);
+        snakePlayAgainButton.addEventListener('click', startSnakeGame);
 
         document.addEventListener('keydown', function(event) {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.code) > -1) {
                 event.preventDefault();
             }
-            changeDirection(event);
+            changeSnakeDirection(event);
         });
 
-        function changeDirection(event) {
+        function changeSnakeDirection(event) {
             const LEFT_KEY = 37;
             const RIGHT_KEY = 39;
             const UP_KEY = 38;
@@ -189,8 +200,8 @@
             snake.unshift(head);
 
             if (head.x === food.x && head.y === food.y) {
-                score++;
-                updateScore();
+                snakeScore++;
+                updateSnakeScore();
                 generateFood();
             } else {
                 snake.pop();
@@ -202,65 +213,285 @@
             food.y = Math.floor(Math.random() * tileCount);
         }
 
-        function drawGame() {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function drawSnakeGame() {
+            snakeCtx.fillStyle = 'white';
+            snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
-            ctx.fillStyle = 'green';
+            snakeCtx.fillStyle = 'green';
             for (let i = 0; i < snake.length; i++) {
-                ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
+                snakeCtx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
             }
 
-            ctx.fillStyle = 'red';
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+            snakeCtx.fillStyle = 'red';
+            snakeCtx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
         }
 
-        function checkCollision() {
+        function checkSnakeCollision() {
             const head = snake[0];
 
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                gameOver = true;
+                snakeGameOver = true;
             }
 
             for (let i = 1; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
-                    gameOver = true;
+                    snakeGameOver = true;
                 }
             }
 
-            if (gameOver) {
-                updateHighScore();
-                endGame();
+            if (snakeGameOver) {
+                updateSnakeHighScore();
+                endSnakeGame();
             }
         }
 
-        function updateScore() {
-            currentScoreElement.textContent = score;
+        function updateSnakeScore() {
+            snakeCurrentScoreElement.textContent = snakeScore;
         }
 
-        function updateHighScore() {
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('snakeHighScore', highScore);
-                highScoreElement.textContent = highScore;
+        function updateSnakeHighScore() {
+            if (snakeScore > snakeHighScore) {
+                snakeHighScore = snakeScore;
+                localStorage.setItem('snakeHighScore', snakeHighScore);
+                snakeHighScoreElement.textContent = snakeHighScore;
             }
         }
 
-        function runGame() {
+        function runSnakeGame() {
             moveSnake();
-            checkCollision();
-            drawGame();
+            checkSnakeCollision();
+            drawSnakeGame();
         }
 
-        function resetGame() {
+        function resetSnakeGame() {
             snake = [{x: 10, y: 10}];
             food = {x: 15, y: 15};
             dx = 0;
             dy = 0;
-            score = 0;
-            gameOver = false;
-            updateScore();
+            snakeScore = 0;
+            snakeGameOver = false;
+            updateSnakeScore();
         }
+
+        // Tetris Game Code
+        const tetrisCanvas = document.getElementById('tetrisCanvas');
+        const tetrisCtx = tetrisCanvas.getContext('2d');
+        const tetrisCurrentScoreElement = document.getElementById('tetrisCurrentScore');
+        const tetrisHighScoreElement = document.getElementById('tetrisHighScore');
+        const tetrisFinalScoreElement = document.getElementById('tetrisFinalScore');
+        const tetrisFinalHighScoreElement = document.getElementById('tetrisFinalHighScore');
+        const tetrisScoreBoard = document.getElementById('tetrisScoreBoard');
+        const tetrisMenuScreen = document.getElementById('tetrisMenuScreen');
+        const tetrisEndScreen = document.getElementById('tetrisEndScreen');
+        const tetrisPlayButton = document.getElementById('tetrisPlayButton');
+        const tetrisPlayAgainButton = document.getElementById('tetrisPlayAgainButton');
+
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK_SIZE = 30;
+        let tetrisScore = 0;
+        let tetrisHighScore = localStorage.getItem('tetrisHighScore') || 0;
+        let tetrisBoard = [];
+        let currentPiece;
+        let tetrisGameOver = false;
+        let tetrisGameLoop;
+
+        tetrisHighScoreElement.textContent = tetrisHighScore;
+
+        const SHAPES = [
+            [[1, 1, 1, 1]],
+            [[1, 1], [1, 1]],
+            [[1, 1, 1], [0, 1, 0]],
+            [[1, 1, 1], [1, 0, 0]],
+            [[1, 1, 1], [0, 0, 1]],
+            [[1, 1, 0], [0, 1, 1]],
+            [[0, 1, 1], [1, 1, 0]]
+        ];
+
+        const COLORS = [
+            'cyan', 'yellow', 'purple', 'green', 'red', 'blue', 'orange'
+        ];
+
+        function startTetrisGame() {
+            tetrisMenuScreen.style.display = 'none';
+            tetrisEndScreen.style.display = 'none';
+            tetrisScoreBoard.style.display = 'block';
+            tetrisCanvas.style.display = 'block';
+            resetTetrisGame();
+            tetrisGameLoop = setInterval(runTetrisGame, 500);
+            document.addEventListener('keydown', handleTetrisKeyPress);
+        }
+
+        function endTetrisGame() {
+            clearInterval(tetrisGameLoop);
+            tetrisFinalScoreElement.textContent = tetrisScore;
+            tetrisFinalHighScoreElement.textContent = tetrisHighScore;
+            tetrisEndScreen.style.display = 'block';
+            tetrisCanvas.style.display = 'none';
+            document.removeEventListener('keydown', handleTetrisKeyPress);
+        }
+
+        tetrisPlayButton.addEventListener('click', startTetrisGame);
+        tetrisPlayAgainButton.addEventListener('click', startTetrisGame);
+
+        function createPiece() {
+            const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+            const color = COLORS[shapeIndex];
+            const shape = SHAPES[shapeIndex];
+            return {
+                shape,
+                color,
+                x: Math.floor(COLS / 2) - Math.ceil(shape[0].length / 2),
+                y: 0
+            };
+        }
+
+        function drawTetrisBoard() {
+            tetrisCtx.fillStyle = '#000';
+            tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+
+            tetrisBoard.forEach((row, y) => {
+                row.forEach((color, x) => {
+                    if (color) {
+                        tetrisCtx.fillStyle = color;
+                        tetrisCtx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    }
+                });
+            });
+
+            if (currentPiece) {
+                currentPiece.shape.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            tetrisCtx.fillStyle = currentPiece.color;
+                            tetrisCtx.fillRect(
+                                (currentPiece.x + x) * BLOCK_SIZE,
+                                (currentPiece.y + y) * BLOCK_SIZE,
+                                BLOCK_SIZE - 1,
+                                BLOCK_SIZE - 1
+                            );
+                        }
+                    });
+                });
+            }
+        }
+
+        function movePiece(dx, dy) {
+            currentPiece.x += dx;
+            currentPiece.y += dy;
+            if (hasCollision()) {
+                currentPiece.x -= dx;
+                currentPiece.y -= dy;
+                return false;
+            }
+            return true;
+        }
+
+        function rotatePiece() {
+            const rotated = currentPiece.shape[0].map((_, i) =>
+                currentPiece.shape.map(row => row[i]).reverse()
+            );
+            const previousShape = currentPiece.shape;
+            currentPiece.shape = rotated;
+            if (hasCollision()) {
+                currentPiece.shape = previousShape;
+            }
+        }
+
+        function hasCollision() {
+            return currentPiece.shape.some((row, dy) =>
+                row.some((value, dx) =>
+                    value &&
+                    (currentPiece.y + dy >= ROWS ||
+                    currentPiece.x + dx < 0 ||
+                    currentPiece.x + dx >= COLS ||
+                    tetrisBoard[currentPiece.y + dy] &&
+                    tetrisBoard[currentPiece.y + dy][currentPiece.x + dx])
+                )
+            );
+        }
+
+        function placePiece() {
+            currentPiece.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        tetrisBoard[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+                    }
+                });
+            });
+        }
+
+        function clearLines() {
+            let linesCleared = 0;
+            tetrisBoard = tetrisBoard.reduce((acc, row) => {
+                if (row.every(cell => cell)) {
+                    linesCleared++;
+                    acc.unshift(new Array(COLS).fill(0));
+                } else {
+                    acc.push(row);
+                }
+                return acc;
+            }, []);
+            return linesCleared;
+        }
+
+        function updateTetrisScore(linesCleared) {
+            const points = [0, 40, 100, 300, 1200];
+            tetrisScore += points[linesCleared];
+            tetrisCurrentScoreElement.textContent = tetrisScore;
+            if (tetrisScore > tetrisHighScore) {
+                tetrisHighScore = tetrisScore;
+                localStorage.setItem('tetrisHighScore', tetrisHighScore);
+                tetrisHighScoreElement.textContent = tetrisHighScore;
+            }
+        }
+
+        function handleTetrisKeyPress(event) {
+            if (tetrisGameOver) return;
+
+            switch(event.keyCode) {
+                case 37: // Left arrow
+                    movePiece(-1, 0);
+                    break;
+                case 39: // Right arrow
+                    movePiece(1, 0);
+                    break;
+                case 40: // Down arrow
+                    movePiece(0, 1);
+                    break;
+                case 38: // Up arrow
+                    rotatePiece();
+                    break;
+            }
+            drawTetrisBoard();
+        }
+
+        function runTetrisGame() {
+            if (!movePiece(0, 1)) {
+                placePiece();
+                const linesCleared = clearLines();
+                updateTetrisScore(linesCleared);
+                currentPiece = createPiece();
+                if (hasCollision()) {
+                    tetrisGameOver = true;
+                    endTetrisGame();
+                    return;
+                }
+            }
+            drawTetrisBoard();
+        }
+
+        function resetTetrisGame() {
+            tetrisBoard = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            tetrisScore = 0;
+            tetrisGameOver = false;
+            currentPiece = createPiece();
+            updateTetrisScore(0);
+        }
+
+        // Initialize high scores
+        snakeHighScoreElement.textContent = snakeHighScore;
+        tetrisHighScoreElement.textContent = tetrisHighScore;
     </script>
 </body>
 </html>
