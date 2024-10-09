@@ -1,133 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>JJ's 3D Interactive Homepage</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="css/site.css">
-    <link rel="stylesheet" type="text/css" href="css/homepage.css">
-    
-    <!-- Three.js and related libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #gameCanvas {
+            border: 2px solid #333;
+        }
+    </style>
 </head>
 <body>
-    <main id="content">
-        <section>
-            <h1>JJ's 3D Interactive Homepage</h1>
-            <div class="minor-section">
-                <img class="cat-photo" src="./img/cute-grey-kitten.jpg">
-                <h2>About Me</h2>
-                <p>My name is JJ. Welcome to my interactive 3D website!</p>
-            </div>
-        </section>
-        
-        <!-- 3D scene container -->
-        <div id="scene-container" style="width: 100%; height: 500px;"></div>
-        
-        <nav id="links">
-            <!-- Put links to labs here. -->
-        </nav>
-    </main>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
 
     <script>
-        let scene, camera, renderer, controls;
-        let world, physicsMaterial, cubeBody, cubeMesh;
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-        function init() {
-            // Set up Three.js scene
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('scene-container').appendChild(renderer.domElement);
+        const gridSize = 20;
+        const tileCount = 20;
+        let snake = [
+            {x: 10, y: 10},
+        ];
+        let food = {x: 15, y: 15};
+        let dx = 0;
+        let dy = 0;
+        let score = 0;
+        let gameOver = false;
 
-            // Set up camera and controls
-            camera.position.set(0, 5, 10);
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
+        document.addEventListener('keydown', changeDirection);
 
-            // Set up lights
-            const ambientLight = new THREE.AmbientLight(0x404040);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            directionalLight.position.set(1, 1, 1);
-            scene.add(directionalLight);
+        function changeDirection(event) {
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39;
+            const UP_KEY = 38;
+            const DOWN_KEY = 40;
 
-            // Set up Cannon.js world
-            world = new CANNON.World();
-            world.gravity.set(0, -9.82, 0);
-            physicsMaterial = new CANNON.Material("slipperyMaterial");
+            const keyPressed = event.keyCode;
+            const goingUp = dy === -1;
+            const goingDown = dy === 1;
+            const goingRight = dx === 1;
+            const goingLeft = dx === -1;
 
-            // Create a ground plane
-            const groundShape = new CANNON.Plane();
-            const groundBody = new CANNON.Body({ mass: 0, material: physicsMaterial });
-            groundBody.addShape(groundShape);
-            groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-            world.addBody(groundBody);
+            if (keyPressed === LEFT_KEY && !goingRight) {
+                dx = -1;
+                dy = 0;
+            }
 
-            // Create a visual ground plane
-            const groundGeometry = new THREE.PlaneGeometry(20, 20);
-            const groundMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
-            const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
-            groundMesh.rotation.x = -Math.PI / 2;
-            scene.add(groundMesh);
+            if (keyPressed === UP_KEY && !goingDown) {
+                dx = 0;
+                dy = -1;
+            }
 
-            // Create a cube
-            const cubeSize = 1;
-            const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-            const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-            cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-            scene.add(cubeMesh);
+            if (keyPressed === RIGHT_KEY && !goingLeft) {
+                dx = 1;
+                dy = 0;
+            }
 
-            // Create a physics body for the cube
-            const cubeShape = new CANNON.Box(new CANNON.Vec3(cubeSize/2, cubeSize/2, cubeSize/2));
-            cubeBody = new CANNON.Body({
-                mass: 1,
-                shape: cubeShape,
-                material: physicsMaterial
-            });
-            cubeBody.position.set(0, 5, 0);
-            world.addBody(cubeBody);
-
-            // Add click event listener to throw the cube
-            renderer.domElement.addEventListener('click', throwCube);
-
-            animate();
-        }
-
-        function throwCube(event) {
-            if (cubeBody) {
-                const force = 15;
-                const clickX = (event.clientX / window.innerWidth) * 2 - 1;
-                const clickY = -(event.clientY / window.innerHeight) * 2 + 1;
-
-                const vector = new THREE.Vector3(clickX, clickY, 0.5);
-                vector.unproject(camera);
-                vector.sub(camera.position).normalize();
-
-                cubeBody.velocity.set(
-                    vector.x * force,
-                    vector.y * force,
-                    vector.z * force
-                );
+            if (keyPressed === DOWN_KEY && !goingUp) {
+                dx = 0;
+                dy = 1;
             }
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
 
-            world.step(1 / 60);
-
-            if (cubeMesh && cubeBody) {
-                cubeMesh.position.copy(cubeBody.position);
-                cubeMesh.quaternion.copy(cubeBody.quaternion);
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                generateFood();
+            } else {
+                snake.pop();
             }
-
-            renderer.render(scene, camera);
         }
 
-        init();
+        function generateFood() {
+            food.x = Math.floor(Math.random() * tileCount);
+            food.y = Math.floor(Math.random() * tileCount);
+        }
+
+        function drawGame() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (gameOver) {
+                ctx.fillStyle = 'black';
+                ctx.font = '50px Arial';
+                ctx.fillText('Game Over!', canvas.width / 6, canvas.height / 2);
+                return;
+            }
+
+            ctx.fillStyle = 'green';
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
+            }
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${score}`, 10, 30);
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                gameOver = true;
+            }
+
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    gameOver = true;
+                }
+            }
+        }
+
+        function gameLoop() {
+            if (gameOver) return;
+
+            moveSnake();
+            checkCollision();
+            drawGame();
+        }
+
+        setInterval(gameLoop, 100);
     </script>
 </body>
 </html>
