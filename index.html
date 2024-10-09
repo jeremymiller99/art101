@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>JJ's Homepage</title>
+<title>JJ's Homepage</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="css/site.css">
@@ -9,9 +6,16 @@
     <style>
         #gameSection {
             display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .game-container {
+            display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 20px;
         }
         .gameCanvas {
             border: 2px solid #333;
@@ -46,9 +50,11 @@
         }
         .gameContainer {
             position: relative;
+            margin-bottom: 20px;
+        }
+        #snakeContainer {
             width: 400px;
             height: 400px;
-            margin-bottom: 20px;
         }
         #tetrisContainer {
             width: 300px;
@@ -65,46 +71,51 @@
                 <p>My name is JJ. Play some games</p>
 
                 <section id="gameSection">
-                    <h2>Play Snake Game</h2>
-                    <div id="snakeScoreBoard" class="scoreBoard" style="display: none;">
-                        <div>Score: <span id="snakeCurrentScore">0</span></div>
-                        <div>High Score: <span id="snakeHighScore">0</span></div>
-                    </div>
-                    <div id="snakeContainer" class="gameContainer">
-                        <canvas id="snakeCanvas" class="gameCanvas" width="400" height="400"></canvas>
-                        <div id="snakeMenuScreen" class="menuScreen">
-                            <h3>Snake Game</h3>
-                            <button id="snakePlayButton" class="button">Play Snake</button>
+                    <div class="game-container">
+                        <h2>Play Snake Game</h2>
+                        <div id="snakeScoreBoard" class="scoreBoard" style="display: none;">
+                            <div>Score: <span id="snakeCurrentScore">0</span></div>
+                            <div>High Score: <span id="snakeHighScore">0</span></div>
                         </div>
-                        <div id="snakeEndScreen" class="endScreen" style="display: none;">
-                            <h3>Game Over</h3>
-                            <p>Score: <span id="snakeFinalScore"></span></p>
-                            <p>High Score: <span id="snakeFinalHighScore"></span></p>
-                            <button id="snakePlayAgainButton" class="button">Play Again</button>
+                        <div id="snakeContainer" class="gameContainer">
+                            <canvas id="snakeCanvas" class="gameCanvas" width="400" height="400"></canvas>
+                            <div id="snakeMenuScreen" class="menuScreen">
+                                <h3>Snake Game</h3>
+                                <button id="snakePlayButton" class="button">Play Snake</button>
+                            </div>
+                            <div id="snakeEndScreen" class="endScreen" style="display: none;">
+                                <h3>Game Over</h3>
+                                <p>Score: <span id="snakeFinalScore"></span></p>
+                                <p>High Score: <span id="snakeFinalHighScore"></span></p>
+                                <button id="snakePlayAgainButton" class="button">Play Again</button>
+                            </div>
                         </div>
                     </div>
 
-                    <h2>Play Tetris</h2>
-                    <div id="tetrisScoreBoard" class="scoreBoard" style="display: none;">
-                        <div>Score: <span id="tetrisCurrentScore">0</span></div>
-                        <div>High Score: <span id="tetrisHighScore">0</span></div>
-                    </div>
-                    <div id="tetrisContainer" class="gameContainer">
-                        <canvas id="tetrisCanvas" class="gameCanvas" width="300" height="600"></canvas>
-                        <div id="tetrisMenuScreen" class="menuScreen">
-                            <h3>Tetris</h3>
-                            <button id="tetrisPlayButton" class="button">Play Tetris</button>
+                    <div class="game-container">
+                        <h2>Play Tetris</h2>
+                        <div id="tetrisScoreBoard" class="scoreBoard" style="display: none;">
+                            <div>Score: <span id="tetrisCurrentScore">0</span></div>
+                            <div>High Score: <span id="tetrisHighScore">0</span></div>
                         </div>
-                        <div id="tetrisEndScreen" class="endScreen" style="display: none;">
-                            <h3>Game Over</h3>
-                            <p>Score: <span id="tetrisFinalScore"></span></p>
-                            <p>High Score: <span id="tetrisFinalHighScore"></span></p>
-                            <button id="tetrisPlayAgainButton" class="button">Play Again</button>
+                        <div id="tetrisContainer" class="gameContainer">
+                            <canvas id="tetrisCanvas" class="gameCanvas" width="300" height="600"></canvas>
+                            <div id="tetrisMenuScreen" class="menuScreen">
+                                <h3>Tetris</h3>
+                                <button id="tetrisPlayButton" class="button">Play Tetris</button>
+                            </div>
+                            <div id="tetrisEndScreen" class="endScreen" style="display: none;">
+                                <h3>Game Over</h3>
+                                <p>Score: <span id="tetrisFinalScore"></span></p>
+                                <p>High Score: <span id="tetrisFinalHighScore"></span></p>
+                                <button id="tetrisPlayAgainButton" class="button">Play Again</button>
+                            </div>
                         </div>
                     </div>
                 </section>
             </div>
         </section>
+
 
         <nav id="links">
             <!-- Put links to labs here. -->
