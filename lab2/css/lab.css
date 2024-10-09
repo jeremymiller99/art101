@@ -1,9 +1,50 @@
 /* Here we can set styles for this lab page that we don't want to effect others pages */
+h1 {
+  color: rgb(0, 0, 0);
+  font-size: 250%;
+  font-family:  monospace
+}
 
+h2 {
+  font-size: 350%;
+  color: #000000;
+  font-family:  monospace
+}
+h3{
+  font-size: 200%;
+  color: rgb(255, 94, 0);
+  font-family:  monospace
+}
+h4{
+  font-size: 200%;
+  color: rgb(255, 174, 0);
+  font-family:  monospace
+}
+h5{
+  font-size: 200%;
+  color: rgb(255, 251, 0);
+  font-family:  monospace
+}
+h6{
+  font-size: 200%;
+  color: rgb(187, 255, 0);
+  font-family:  monospace
+}
 /* the period in a CSS selector selects an element by class, e.g., class="minor-section" */
 .minor-section {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: solid 1px #888;
-    background-color: #DDD8C4;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: solid 10px #000000;
+    background-color: #493517;
   }
+/* settings for the img */
+img {
+   width: 150px;
+   height: auto;
+}
+body{
+  background-color: #4e4e4e
+}
+main{
+  color: azure;
+}
