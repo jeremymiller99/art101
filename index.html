@@ -45,11 +45,19 @@
             background-color: #45a049;
         }
         #menuScreen, #endScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
-            margin-top: 10px;
+        }
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 400px;
         }
     </style>
 </head>
@@ -72,16 +80,18 @@
                 <div>Score: <span id="currentScore">0</span></div>
                 <div>High Score: <span id="highScore">0</span></div>
             </div>
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <div id="menuScreen">
-                <h3>Snake Game</h3>
-                <button id="playButton" class="button">Play</button>
-            </div>
-            <div id="endScreen" style="display: none;">
-                <h3>Game Over</h3>
-                <p>Score: <span id="finalScore"></span></p>
-                <p>High Score: <span id="finalHighScore"></span></p>
-                <button id="playAgainButton" class="button">Play Again</button>
+            <div id="gameContainer">
+                <canvas id="gameCanvas" width="400" height="400"></canvas>
+                <div id="menuScreen">
+                    <h3>Snake Game</h3>
+                    <button id="playButton" class="button">Play</button>
+                </div>
+                <div id="endScreen" style="display: none;">
+                    <h3>Game Over</h3>
+                    <p>Score: <span id="finalScore"></span></p>
+                    <p>High Score: <span id="finalHighScore"></span></p>
+                    <button id="playAgainButton" class="button">Play Again</button>
+                </div>
             </div>
         </section>
 
@@ -136,7 +146,12 @@
         playButton.addEventListener('click', startGame);
         playAgainButton.addEventListener('click', startGame);
 
-        document.addEventListener('keydown', changeDirection);
+        document.addEventListener('keydown', function(event) {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.code) > -1) {
+                event.preventDefault();
+            }
+            changeDirection(event);
+        });
 
         function changeDirection(event) {
             const LEFT_KEY = 37;
