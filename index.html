@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>JJ's Homepage</title>
+<title>JJ's Homepage</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="css/site.css">
     <link rel="stylesheet" type="text/css" href="css/homepage.css">
+    <style>
+        
+    </style>
 </head>
 <body>
     <main id="content">
         <section>
             <h1>JJ's Homepage</h1>
-            <img class="selfie" src="img/image.jpg">
+            <img id="selfie" src="img/image.jpg">
             <div class="minor-section">
                 <h2>Welcome to my page</h2>
-                <p>My name is JJ. I like video games, so I added Tetris and Snake. Have fun!</p>
+                <p>My name is JJ. I like viedo games, so I added tetris and snake. Have fun!</p>
 
                 <section id="gameSection">
                     <div class="game-container">
@@ -61,11 +61,394 @@
                 </section>
             </div>
         </section>
+
+
         <nav id="links">
             <!-- Put links to labs here. -->
         </nav>
     </main>
-    <script src="js/snake.js"></script>
-    <script src="js/tetris.js"></script>
+
+    <script>
+        // Snake Game Code
+        const snakeCanvas = document.getElementById('snakeCanvas');
+        const snakeCtx = snakeCanvas.getContext('2d');
+        const snakeCurrentScoreElement = document.getElementById('snakeCurrentScore');
+        const snakeHighScoreElement = document.getElementById('snakeHighScore');
+        const snakeFinalScoreElement = document.getElementById('snakeFinalScore');
+        const snakeFinalHighScoreElement = document.getElementById('snakeFinalHighScore');
+        const snakeScoreBoard = document.getElementById('snakeScoreBoard');
+        const snakeMenuScreen = document.getElementById('snakeMenuScreen');
+        const snakeEndScreen = document.getElementById('snakeEndScreen');
+        const snakePlayButton = document.getElementById('snakePlayButton');
+        const snakePlayAgainButton = document.getElementById('snakePlayAgainButton');
+
+        const gridSize = 20;
+        const tileCount = 20;
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 15, y: 15};
+        let dx = 0;
+        let dy = 0;
+        let snakeScore = 0;
+        let snakeHighScore = localStorage.getItem('snakeHighScore') || 0;
+        let snakeGameOver = false;
+        let snakeGameLoop;
+
+        snakeHighScoreElement.textContent = snakeHighScore;
+
+        function startSnakeGame() {
+            snakeMenuScreen.style.display = 'none';
+            snakeEndScreen.style.display = 'none';
+            snakeScoreBoard.style.display = 'block';
+            snakeCanvas.style.display = 'block';
+            resetSnakeGame();
+            snakeGameLoop = setInterval(runSnakeGame, 100);
+        }
+
+        function endSnakeGame() {
+            clearInterval(snakeGameLoop);
+            snakeFinalScoreElement.textContent = snakeScore;
+            snakeFinalHighScoreElement.textContent = snakeHighScore;
+            snakeEndScreen.style.display = 'block';
+            snakeCanvas.style.display = 'none';
+        }
+
+        snakePlayButton.addEventListener('click', startSnakeGame);
+        snakePlayAgainButton.addEventListener('click', startSnakeGame);
+
+        document.addEventListener('keydown', function(event) {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(event.code) > -1) {
+                event.preventDefault();
+            }
+            changeSnakeDirection(event);
+        });
+
+        function changeSnakeDirection(event) {
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39;
+            const UP_KEY = 38;
+            const DOWN_KEY = 40;
+
+            const keyPressed = event.keyCode;
+            const goingUp = dy === -1;
+            const goingDown = dy === 1;
+            const goingRight = dx === 1;
+            const goingLeft = dx === -1;
+
+            if (keyPressed === LEFT_KEY && !goingRight) {
+                dx = -1;
+                dy = 0;
+            }
+            if (keyPressed === UP_KEY && !goingDown) {
+                dx = 0;
+                dy = -1;
+            }
+            if (keyPressed === RIGHT_KEY && !goingLeft) {
+                dx = 1;
+                dy = 0;
+            }
+            if (keyPressed === DOWN_KEY && !goingUp) {
+                dx = 0;
+                dy = 1;
+            }
+        }
+
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                snakeScore++;
+                updateSnakeScore();
+                generateFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function generateFood() {
+            food.x = Math.floor(Math.random() * tileCount);
+            food.y = Math.floor(Math.random() * tileCount);
+        }
+
+        function drawSnakeGame() {
+            snakeCtx.fillStyle = 'white';
+            snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+            snakeCtx.fillStyle = 'green';
+            for (let i = 0; i < snake.length; i++) {
+                snakeCtx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize - 2, gridSize - 2);
+            }
+
+            snakeCtx.fillStyle = 'red';
+            snakeCtx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+        }
+
+        function checkSnakeCollision() {
+            const head = snake[0];
+
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                snakeGameOver = true;
+            }
+
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    snakeGameOver = true;
+                }
+            }
+
+            if (snakeGameOver) {
+                updateSnakeHighScore();
+                endSnakeGame();
+            }
+        }
+
+        function updateSnakeScore() {
+            snakeCurrentScoreElement.textContent = snakeScore;
+        }
+
+        function updateSnakeHighScore() {
+            if (snakeScore > snakeHighScore) {
+                snakeHighScore = snakeScore;
+                localStorage.setItem('snakeHighScore', snakeHighScore);
+                snakeHighScoreElement.textContent = snakeHighScore;
+            }
+        }
+
+        function runSnakeGame() {
+            moveSnake();
+            checkSnakeCollision();
+            drawSnakeGame();
+        }
+
+        function resetSnakeGame() {
+            snake = [{x: 10, y: 10}];
+            food = {x: 15, y: 15};
+            dx = 0;
+            dy = 0;
+            snakeScore = 0;
+            snakeGameOver = false;
+            updateSnakeScore();
+        }
+
+        // Tetris Game Code
+        const tetrisCanvas = document.getElementById('tetrisCanvas');
+        const tetrisCtx = tetrisCanvas.getContext('2d');
+        const tetrisCurrentScoreElement = document.getElementById('tetrisCurrentScore');
+        const tetrisHighScoreElement = document.getElementById('tetrisHighScore');
+        const tetrisFinalScoreElement = document.getElementById('tetrisFinalScore');
+        const tetrisFinalHighScoreElement = document.getElementById('tetrisFinalHighScore');
+        const tetrisScoreBoard = document.getElementById('tetrisScoreBoard');
+        const tetrisMenuScreen = document.getElementById('tetrisMenuScreen');
+        const tetrisEndScreen = document.getElementById('tetrisEndScreen');
+        const tetrisPlayButton = document.getElementById('tetrisPlayButton');
+        const tetrisPlayAgainButton = document.getElementById('tetrisPlayAgainButton');
+
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK_SIZE = 30;
+        let tetrisScore = 0;
+        let tetrisHighScore = localStorage.getItem('tetrisHighScore') || 0;
+        let tetrisBoard = [];
+        let currentPiece;
+        let tetrisGameOver = false;
+        let tetrisGameLoop;
+
+        tetrisHighScoreElement.textContent = tetrisHighScore;
+
+        const SHAPES = [
+            [[1, 1, 1, 1]],
+            [[1, 1], [1, 1]],
+            [[1, 1, 1], [0, 1, 0]],
+            [[1, 1, 1], [1, 0, 0]],
+            [[1, 1, 1], [0, 0, 1]],
+            [[1, 1, 0], [0, 1, 1]],
+            [[0, 1, 1], [1, 1, 0]]
+        ];
+
+        const COLORS = [
+            'cyan', 'yellow', 'purple', 'green', 'red', 'blue', 'orange'
+        ];
+
+        function startTetrisGame() {
+            tetrisMenuScreen.style.display = 'none';
+            tetrisEndScreen.style.display = 'none';
+            tetrisScoreBoard.style.display = 'block';
+            tetrisCanvas.style.display = 'block';
+            resetTetrisGame();
+            tetrisGameLoop = setInterval(runTetrisGame, 500);
+            document.addEventListener('keydown', handleTetrisKeyPress);
+        }
+
+        function endTetrisGame() {
+            clearInterval(tetrisGameLoop);
+            tetrisFinalScoreElement.textContent = tetrisScore;
+            tetrisFinalHighScoreElement.textContent = tetrisHighScore;
+            tetrisEndScreen.style.display = 'block';
+            tetrisCanvas.style.display = 'none';
+            document.removeEventListener('keydown', handleTetrisKeyPress);
+        }
+
+        tetrisPlayButton.addEventListener('click', startTetrisGame);
+        tetrisPlayAgainButton.addEventListener('click', startTetrisGame);
+
+        function createPiece() {
+            const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+            const color = COLORS[shapeIndex];
+            const shape = SHAPES[shapeIndex];
+            return {
+                shape,
+                color,
+                x: Math.floor(COLS / 2) - Math.ceil(shape[0].length / 2),
+                y: 0
+            };
+        }
+
+        function drawTetrisBoard() {
+            tetrisCtx.fillStyle = '#000';
+            tetrisCtx.fillRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
+
+            tetrisBoard.forEach((row, y) => {
+                row.forEach((color, x) => {
+                    if (color) {
+                        tetrisCtx.fillStyle = color;
+                        tetrisCtx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    }
+                });
+            });
+
+            if (currentPiece) {
+                currentPiece.shape.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            tetrisCtx.fillStyle = currentPiece.color;
+                            tetrisCtx.fillRect(
+                                (currentPiece.x + x) * BLOCK_SIZE,
+                                (currentPiece.y + y) * BLOCK_SIZE,
+                                BLOCK_SIZE - 1,
+                                BLOCK_SIZE - 1
+                            );
+                        }
+                    });
+                });
+            }
+        }
+
+        function movePiece(dx, dy) {
+            currentPiece.x += dx;
+            currentPiece.y += dy;
+            if (hasCollision()) {
+                currentPiece.x -= dx;
+                currentPiece.y -= dy;
+                return false;
+            }
+            return true;
+        }
+
+        function rotatePiece() {
+            const rotated = currentPiece.shape[0].map((_, i) =>
+                currentPiece.shape.map(row => row[i]).reverse()
+            );
+            const previousShape = currentPiece.shape;
+            currentPiece.shape = rotated;
+            if (hasCollision()) {
+                currentPiece.shape = previousShape;
+            }
+        }
+
+        function hasCollision() {
+            return currentPiece.shape.some((row, dy) =>
+                row.some((value, dx) =>
+                    value &&
+                    (currentPiece.y + dy >= ROWS ||
+                    currentPiece.x + dx < 0 ||
+                    currentPiece.x + dx >= COLS ||
+                    tetrisBoard[currentPiece.y + dy] &&
+                    tetrisBoard[currentPiece.y + dy][currentPiece.x + dx])
+                )
+            );
+        }
+
+        function placePiece() {
+            currentPiece.shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        tetrisBoard[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+                    }
+                });
+            });
+        }
+
+        function clearLines() {
+            let linesCleared = 0;
+            tetrisBoard = tetrisBoard.reduce((acc, row) => {
+                if (row.every(cell => cell)) {
+                    linesCleared++;
+                    acc.unshift(new Array(COLS).fill(0));
+                } else {
+                    acc.push(row);
+                }
+                return acc;
+            }, []);
+            return linesCleared;
+        }
+
+        function updateTetrisScore(linesCleared) {
+            const points = [0, 40, 100, 300, 1200];
+            tetrisScore += points[linesCleared];
+            tetrisCurrentScoreElement.textContent = tetrisScore;
+            if (tetrisScore > tetrisHighScore) {
+                tetrisHighScore = tetrisScore;
+                localStorage.setItem('tetrisHighScore', tetrisHighScore);
+                tetrisHighScoreElement.textContent = tetrisHighScore;
+            }
+        }
+
+        function handleTetrisKeyPress(event) {
+            if (tetrisGameOver) return;
+
+            switch(event.keyCode) {
+                case 37: // Left arrow
+                    movePiece(-1, 0);
+                    break;
+                case 39: // Right arrow
+                    movePiece(1, 0);
+                    break;
+                case 40: // Down arrow
+                    movePiece(0, 1);
+                    break;
+                case 38: // Up arrow
+                    rotatePiece();
+                    break;
+            }
+            drawTetrisBoard();
+        }
+
+        function runTetrisGame() {
+            if (!movePiece(0, 1)) {
+                placePiece();
+                const linesCleared = clearLines();
+                updateTetrisScore(linesCleared);
+                currentPiece = createPiece();
+                if (hasCollision()) {
+                    tetrisGameOver = true;
+                    endTetrisGame();
+                    return;
+                }
+            }
+            drawTetrisBoard();
+        }
+
+        function resetTetrisGame() {
+            tetrisBoard = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            tetrisScore = 0;
+            tetrisGameOver = false;
+            currentPiece = createPiece();
+            updateTetrisScore(0);
+        }
+
+        // Initialize high scores
+        snakeHighScoreElement.textContent = snakeHighScore;
+        tetrisHighScoreElement.textContent = tetrisHighScore;
+    </script>
 </body>
 </html>
