@@ -7,3 +7,16 @@
     border: solid 1px #888;
     background-color: #DDD8C4;
   }
+
+.imgs{
+    width: 500px;
+    height: auto;
+}
+
+#file_structure_image{
+  width: 80%;
+}
+
+#snake_image{
+  width: 40%;
+}
