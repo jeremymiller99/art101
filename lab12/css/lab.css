@@ -5,12 +5,13 @@
     padding: 10px;
     margin-bottom: 10px;
     border: solid 1px #888;
-    background-color: #DDD8C4;
+    background-color: rgb(23, 43, 133);
   }
 
-  .special {
-    background-color: blueviolet;
-    border: dotted 50px red;
-    color: pink;
-    font-weight: bold;
-}
+body {
+    background-color: #50808E;
+  }
+
+h1,h2,h3,p {
+    color: whitesmoke;
+  }
