@@ -1,0 +1,36 @@
+/* Here we can set styles for this lab page that we don't want to effect others pages */
+
+/* the period in a CSS selector selects an element by class, e.g., class="minor-section" */
+.minor-section {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: solid 1px #888;
+    background-color: rgb(23, 43, 133);
+  }
+
+body {
+    background-color: #50808E;
+  }
+
+h1,h2,h3,p {
+    color: whitesmoke;
+  }
+
+.pokemon-team {
+    display: flex;
+    gap: 20px; /* Adds space between Pokémon */
+    justify-content: center; /* Centers the team horizontally */
+    align-items: center; /* Aligns Pokémon cards vertically */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.pokemon {
+    text-align: center; /* Centers text inside each Pokémon card */
+    font-family: Arial, sans-serif;
+}
+
+.pokemon img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain; /* Ensures the Pokémon image fits well */
+}
